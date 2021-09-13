@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>페이징 스크롤</title>
+        <style>
+            body {
+                transition: all 2.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+                overflow-x: hidden;
+            }
+            .navigation {
+                position: fixed;
+                left: 50%;
+                top: 46%;
+                transform: translate(-50%, -50%);
+            }
+            h1 {
+                font-size: 30px;
+                font-weight: bold;
+                text-align: center;
+            }
+            button {
+                font-size: 20px;
+                padding: 10px 30px;
+                cursor: pointer;
+            }
+
+            section {
+                height: 100vh;
+                width: 100vw;
+                border-top: 2px dashed rgba(0, 0, 0, 0.5);
+            }
+        </style>
+        <script>
+            window.onload = function () {
+                var prevButton = document.querySelector(".prevButton");
+                var nextButton = document.querySelector(".nextButton");
+                var h1 = document.getElementsByTagName("h1")[0];
+                var bgColorArray = ["#FFCCCC", "#66CC99", "#6699FF", "#9966FF"];
+                var section = document.getElementsByTagName("section");
+
+                var pageNum = 0;
+                var totalNum = section.length;
+
+                prevButton.addEventListener("click", function () {
+                    if (pageNum > 0) {
+                        pageNum--;
+                    }
+                    pageChange();
+                    window.scrollTo({
+                        top: section[pageNum].offsetTop,
+                        behavior: "smooth",
+                    });
+                });
+
+                nextButton.addEventListener("click", function () {
+                    if (pageNum < totalNum - 1) {
+                        pageNum++;
+                    }
+                    pageChange();
+                    window.scrollTo({
+                        top: section[pageNum].offsetTop,
+                        behavior: "smooth",
+                    });
+                });
+
+                function pageChange() {
+                    h1.innerHTML = pageNum + 1 + "페이지 입니다.";
+                    document.getElementsByTagName("body")[0].style.background = bgColorArray[pageNum];
+                }
+
+                pageChange();
+
+                window.addEventListener("scroll", function (event) {
+                    var scroll = this.scrollY;
+
+                    //    //1번 방법
+                    //    //페이지가 적으면 ㄱㅊ
+                    //    if (scroll < section[1].offsetTop) {
+                    //        pageNum = 0;
+                    //    }
+
+                    //    if (scroll > section[1].offsetTop) {
+                    //        pageNum = 1;
+                    //    }
+
+                    //    if (scroll > section[2].offsetTop) {
+                    //        pageNum = 2;
+                    //    }
+
+                    //    if (scroll > section[3].offsetTop) {
+                    //        pageNum = 3;
+                    //    }
+
+                    //2번 방법
+                    for (var i = 0; i < totalNum; i++) {
+                        if (
+                            scroll > section[i].offsetTop - window.outerHeight / 3 &&
+                            scroll < section[i].offsetTop - window.outerHeight / 3 + section[i].offsetHeight
+                        ) {
+                            pageNum = i;
+                            break;
+                        }
+                    }
+                    pageChange();
+                });
+            };
+        </script>
+    </head>
+    <body>
+        <div class="navigation">
+            <button type="button" class="prevButton">PREV</button>
+            <button type="button" class="nextButton">NEXT</button>
+            <h1></h1>
+        </div>
+        <section>
+            <h2>page1</h2>
+        </section>
+        <section>
+            <h2>page2</h2>
+        </section>
+        <section>
+            <h2>page3</h2>
+        </section>
+        <section>
+            <h2>page4</h2>
+        </section>
+    </body>
+</html>
